@@ -14,7 +14,11 @@
     <div class="title"></div>
     <h4></h4>
     <ul></ul>
-    
+  
+
+
+    <!-- 引入jq -->
+    <script src="jquery-3.5.1.min.js"></script>
 </body>
 </html>
 <script>
@@ -34,10 +38,40 @@
         error:,
         complete:
       }
-    ) */   
+    ) */
 
+    // jquery.ajax(} 也可以這樣寫
+    $.ajax(
+      {
+        url:'https://kktix.com/events.json',
+        type:'GET',  //同method
+        success: function(response){
+          console.log(response);
+          renderList(response);
+        },
+        error:function(err){
+          console.log("err:"+err);
+        },
+        complete:function(xhr,status){
+          console.log("status:"+status);
+        }
+      }
+    )
+
+
+    function renderList(response){
+      document.querySelector(".title").innerHTML=response.title;
+      document.querySelector("h4").innerHTML=response.updated;
+
+      let events=response.entry;
+      let str="";
+      events.forEach(function(event,index){
+          str=str+`<li> ${event.title} </li>`;
+      });
+
+      document.querySelector("ul").innerHTML=str;
+    }
     
     //利用$.get()方法傳送請求並取得回應
-
 
   </script>

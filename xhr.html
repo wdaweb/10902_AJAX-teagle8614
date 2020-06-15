@@ -14,6 +14,8 @@
     <h4></h4>
     <ul></ul>
 
+    <div class="footer"></div>
+
 </body>
 </html>
 <script>
@@ -48,8 +50,8 @@
         // querySelector內的物件要先自己在html內建立好，否則會出錯
         document.querySelector(".title").innerHTML=res.title;
         document.querySelector("h4").innerHTML=res.updated;
+        
         let events=res.entry;
-
         let str="";
         events.forEach(function(event,index){
             str=str+`<li>${event.title}</li>`;
@@ -57,9 +59,13 @@
 
         // document.getElementsByTagName('ul')[0].innerHTML=str;
         document.querySelector('ul').innerHTML=str; //可以用querySelector取代getElementsByTagName
+        document.querySelector(".footer").innerHTML="這是頁腳2";
     };
 
     //送出請求
     xhr.send(); //沒有送出請求就會讀不到東西
-
+    document.querySelector(".footer").innerHTML="這是頁腳1";
+    //重整頁面後會發現，"這是頁腳"會比ajax抓出來的東西還要快顯示
+    // 是因為這東西是在本地端就可以先執行，所以系統就先判定他可以先執行
+    // 如果希望在讀取資料之後才顯示，就要放入onload之中
     </script>

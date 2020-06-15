@@ -24,9 +24,44 @@
     * 4.建立錯誤處理
     ********************************************************/
 
-    //建立FETCH請求及實質內容
+    //建立FETCH請求及實質內容()
+    // .then 執行完一個後再執行下一個
+    fetch('https://kktix.com/events.json',{method:'get'})
+    .then(function(response){
+        return response.json()
+    })
+    .then(function(res){
+        console.log(res)
 
+        renderList(res);
+        // document.querySelector(".title").innerHTML=res.title;
+        // document.querySelector("h4").innerHTML=res.updated;
 
+        // let events=res.entry;
+        // let str="";
+        // events.forEach(function(event,index){
+        //     str=str+`<li> ${event.title} </li>`;
+        // });
+
+        // document.querySelector("ul").innerHTML=str;
+
+    })
+    .catch(function(err){
+        console.log(err)
+    });
+
+    function renderList(response){
+        document.querySelector(".title").innerHTML=response.title;
+        document.querySelector("h4").innerHTML=response.updated;
+
+        let events=response.entry;
+        let str="";
+        events.forEach(function(event,index){
+            str=str+`<li> ${event.title} </li>`;
+        });
+
+        document.querySelector("ul").innerHTML=str;
+    }
     //建立回呼函式(call back function)來處理回應時的各項行為
 
 

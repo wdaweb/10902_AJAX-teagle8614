@@ -39,24 +39,40 @@
         complete:
       }
     ) */
-
+    
+    // 方法1:
     // jquery.ajax(} 也可以這樣寫
-    $.ajax(
-      {
-        url:'https://kktix.com/events.json',
-        type:'GET',  //同method
-        success: function(response){
-          console.log(response);
-          renderList(response);
-        },
-        error:function(err){
-          console.log("err:"+err);
-        },
-        complete:function(xhr,status){
-          console.log("status:"+status);
-        }
-      }
-    )
+    // $.ajax(
+    //   {
+    //     url:'https://kktix.com/events.json',
+    //     type:'GET',  //同method
+    //     success: function(response){
+    //       console.log(response);
+    //       renderList(response);
+    //     },
+    //     error:function(err){
+    //       console.log("err:"+err);
+    //     },
+    //     complete:function(xhr,status){
+    //       console.log("status:"+status);
+    //     }
+    //   }
+    // )
+    
+
+    // 方法2:
+    //Method: GET(安全取得資料，不會更改到資料內容、其他的方法都有機會更改到資料
+    // 會針對第二個值傳入的內容作改變
+    // $.get('https://kktix.com/events.json',{'table':"news",'id':12},function(response){  //=>api/add.php?table=news&id=12
+    // })
+    // $.get('https://kktix.com/events.json',function(response){
+    //   console.log(response);
+    //   renderList(response);
+    // })
+
+    
+    // 方法3:但會將整個東西當字串讀入，需要在針對資料做處理
+    $("ul").load('https://kktix.com/events.json');
 
 
     function renderList(response){

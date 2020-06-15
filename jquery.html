@@ -65,14 +65,14 @@
     // 會針對第二個值傳入的內容作改變
     // $.get('https://kktix.com/events.json',{'table':"news",'id':12},function(response){  //=>api/add.php?table=news&id=12
     // })
-    // $.get('https://kktix.com/events.json',function(response){
-    //   console.log(response);
-    //   renderList(response);
-    // })
+    $.get('https://kktix.com/events.json',function(response){
+      console.log(response);
+      renderList(response);
+    })
 
     
     // 方法3:但會將整個東西當字串讀入，需要在針對資料做處理
-    $("ul").load('https://kktix.com/events.json');
+    // $("ul").load('https://kktix.com/events.json');
 
 
     function renderList(response){

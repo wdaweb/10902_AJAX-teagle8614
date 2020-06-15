@@ -8,12 +8,50 @@
     <link rel="shortcut icon" href="#" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
     <!---匯入要使用的函式庫--->
-
+    <script src="jquery-3.5.1.min.js"></script>
 
 </head>
 <body>
+  <!-- 用ajax傳送資料可以使頁面不做轉換，就使資料處理完成，傳輸的速度較高、流量也較低 -->
   <h1 class="header">學生資料管理系統</h1>
+  <button onclick="openInsert()">新增</button>
 
+
+
+  <div class="query">
+    班級: <select name="classes" id="classes" onchange="getStudents(this.value)"></select>
+
+    <input type="text" name="query" id="query">
+    <input type="button" value="查詢" onclick="query()">
+    <div class="query-result"></div>
+    <div class="students"></div>
+  </div>
+
+
+
+
+
+  <!-- 新增資料用的表單 -->
+  <div style="display: none;" id="insertBlock">
+    <h3>新增學生資料</h3>
+    <form action="api/insert.php" method="post" id="create">
+      <ul>
+        <li><span>姓名:</span><input type="text" name="name" id="name"></li>
+        <li><span>學號:</span><input type="text" name="uni_id" id="uni_id"></li>
+        <li><span>班級座號:</span><input type="text" name="class_num" id="class_num"></li>
+        <li><span>出生年月日:</span><input type="text" name="birthday" id="birthday"></li>
+        <li><span>身份證字號:</span><input type="text" name="nat_id" id="nat_id"></li>
+        <li><span>住址:</span><input type="text" name="addr" id="addr"></li>
+        <li><span>父母:</span><input type="text" name="parent" id="parent"></li>
+        <li><span>電話:</span><input type="text" name="tel" id="tel"></li>
+        <li><span>科別:</span><input type="text" name="dept" id="dept"></li>
+        <li><span>畢業國中:</span><input type="text" name="grad_at" id="grad_at"></li>
+      </ul>
+      <div><input type="button" value="確定新增" onclick="create()"></div>
+    </form>
+  </div>
+
+  
   
 </body>
 </html>
@@ -25,16 +63,76 @@
 * 4.是否會有回傳值？回傳值的功用及處理？
 * 5.是否需要更新畫面內容？更新畫面的方法？
 ************************************/
+getClasses();
+
+
+// 顯示新增資料表格
+function openInsert(){
+  document.querySelector("#insertBlock").style.display="block";
+}
+
+
 
 
 //新增資料的函式
 function create(){
+  // $.ajax({
+  //   url:'',
+  //   type:'',
+  //   success: function(){
 
+  //   }
+  // })
+
+  let name=document.querySelector("#name").value;
+  let uni_id=document.querySelector("#uni_id").value;
+  let class_num=document.querySelector("#class_num").value;
+  let birthday=document.querySelector("#birthday").value;
+  let nat_id=document.querySelector("#nat_id").value;
+  let addr=document.querySelector("#addr").value;
+  let parent=document.querySelector("#parent").value;
+  let tel=document.querySelector("#tel").value;
+  let dept=document.querySelector("#dept").value;
+  let grad_at=document.querySelector("#grad_at").value;
+  console.log(name,uni_id,class_num,birthday,nat_id,addr,parent,tel,dept,grad_at);
+
+
+  $.post("api/insert.php",{name,uni_id,class_num,birthday,nat_id,addr,parent,tel,dept,grad_at},function(res){
+    console.log(res);
+
+    if(res==1){
+      console.log("新增成功");
+      document.querySelector("#insertBlock").style.display="none";
+    }
+  });
 }
+
+// 生成班級的option
+function getClasses(){
+  $.get("api/select_class.php",function(opt){
+    // console.log(opt);
+    document.querySelector("#classes").innerHTML=opt;
+  });
+}
+
+// 抓出該班級的學生資料
+// 關鍵字前面加底線就可以當作變數
+function getStudents(_class){
+  console.log(_class);
+  $.get("api/get_students.php",{'class':_class},function(students){
+    // =>api/get_students.php?class=101  會用get傳輸
+    // console.log(students);
+    document.querySelector(".students").innerHTML=students;
+  })
+}
+
 
 //查詢資料的函式
 function query(){
-
+  let str=document.querySelector("#query").value;
+  $.get("api/query.php",{str},function(res){
+    document.querySelector(".query-result").innerHTML=res;
+  })
 }
 
 //編輯資料的函式

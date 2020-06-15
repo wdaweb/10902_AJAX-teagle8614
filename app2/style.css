@@ -14,3 +14,17 @@
     text-align: center;
     font-size:32px;
 }
+
+form span{
+    display: inline-block;
+    width: 100px;
+    /* text-align: right; */
+}
+
+.students table{
+    border-collapse: collapse;
+}
+.students table tr td{
+    padding: 5px;
+    border: 1px solid #ddd;
+}

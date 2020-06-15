@@ -14,7 +14,9 @@
     <div class="title"></div>
     <h4></h4>
     <ul></ul>
+
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
 </body>
 </html>
 <script>
@@ -26,11 +28,38 @@
 ********************************************************/
 
 //發起一個axios請求
+axios.get('https://kktix.com/events.json')
+.then(function(response){
+    console.log(response); //顯示後發現抓取的資料格式不同，再修改為response.data
+
+    renderList(response.data);
+//處理回應
+
+})
+.catch(function(err){
+//error
+
+})
 
 
 //建立回呼函式(call back function)來處理回應時的各項行為
 
 
 //建立錯誤處理
+
+
+
+function renderList(response){
+    document.querySelector(".title").innerHTML=response.title;
+    document.querySelector("h4").innerHTML=response.updated;
+
+    let events=response.entry;
+    let str="";
+    events.forEach(function(event,index){
+        str=str+`<li> ${event.title} </li>`;
+    });
+
+    document.querySelector("ul").innerHTML=str;
+}
 
 </script>

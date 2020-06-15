@@ -26,14 +26,40 @@
     ********************************************************/
 
     //宣告一個XMLHttpRequest物件
+    let xhr=new XMLHttpRequest;
 
 
     //建立請求的各項設定及實質內容
+    xhr.open(
+        'GET',  //Method: GET(拿資料)、POST(改資料)
+        'https://kktix.com/events.json',    //URL
+        true   //async請求: 同步(false)或非同步(true，預設值)
+    );
 
 
     //建立得到回應時的各項設定及行為
+    // onload是拿到資料的地方，且抓出來的資料不會存在本地端內
+    xhr.onload=function(){
+        let type=xhr.getResponseHeader("Content-Type");  //回傳標頭的類型
+        let response=xhr.responseText; //回傳內容為純文字
+        let res=JSON.parse(response);  
+        console.log(res);
 
+        // querySelector內的物件要先自己在html內建立好，否則會出錯
+        document.querySelector(".title").innerHTML=res.title;
+        document.querySelector("h4").innerHTML=res.updated;
+        let events=res.entry;
+
+        let str="";
+        events.forEach(function(event,index){
+            str=str+`<li>${event.title}</li>`;
+        });
+
+        // document.getElementsByTagName('ul')[0].innerHTML=str;
+        document.querySelector('ul').innerHTML=str; //可以用querySelector取代getElementsByTagName
+    };
 
     //送出請求
+    xhr.send(); //沒有送出請求就會讀不到東西
 
     </script>

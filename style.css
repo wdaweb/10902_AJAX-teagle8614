@@ -30,3 +30,24 @@
     text-align: center;
     font-size:32px;
 }
+
+.title{
+    text-align: center;
+    font-weight: bolder;
+    border: 3px dashed orange;
+    box-shadow: 1px 1px 5px #ddd;
+}
+h4{
+    font-size: 12px;
+    border-bottom: 3px double #ddd;
+}
+
+ul li{
+    margin: 5px 10px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #ddd;
+}
+ul li:hover{
+    color: #fff;
+    background-color: orange;
+}

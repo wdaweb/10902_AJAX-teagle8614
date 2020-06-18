@@ -9,7 +9,17 @@
     <link rel="stylesheet" href="style.css">
     <!---匯入要使用的函式庫--->
     <script src="jquery-3.5.1.min.js"></script>
-
+    <style>
+      .list {
+        margin: 5px auto;
+      }
+      .list button{
+        padding: 10px 20px;
+        border-radius: 30px;
+        color: #fff;
+        background-color: orange;
+      }
+    </style>
 </head>
 <body>
   <!-- 用ajax傳送資料可以使頁面不做轉換，就使資料處理完成，傳輸的速度較高、流量也較低 -->
@@ -19,39 +29,25 @@
 
 
   <div class="query">
+    <!---用來顯示班級清單的選單--->
     班級: <select name="classes" id="classes" onchange="getStudents(this.value)"></select>
-
+    
     <input type="text" name="query" id="query">
     <input type="button" value="查詢" onclick="query()">
+
+    <!--用來存放編輯表單的區塊-->
+    <div class="edit-form"></div>
+
+    <!--用來存放新增表單的區塊-->
+    <div class="add-form"></div>
+    
+    <!--用來存放查詢結果的區塊-->
     <div class="query-result"></div>
+
+    <!--用來存放學生資料的區塊-->
     <div class="students"></div>
   </div>
 
-
-
-
-
-  <!-- 新增資料用的表單 -->
-  <div style="display: none;" id="insertBlock">
-    <h3>新增學生資料</h3>
-    <form action="api/insert.php" method="post" id="create">
-      <ul>
-        <li><span>姓名:</span><input type="text" name="name" id="name"></li>
-        <li><span>學號:</span><input type="text" name="uni_id" id="uni_id"></li>
-        <li><span>班級座號:</span><input type="text" name="class_num" id="class_num"></li>
-        <li><span>出生年月日:</span><input type="text" name="birthday" id="birthday"></li>
-        <li><span>身份證字號:</span><input type="text" name="nat_id" id="nat_id"></li>
-        <li><span>住址:</span><input type="text" name="addr" id="addr"></li>
-        <li><span>父母:</span><input type="text" name="parent" id="parent"></li>
-        <li><span>電話:</span><input type="text" name="tel" id="tel"></li>
-        <li><span>科別:</span><input type="text" name="dept" id="dept"></li>
-        <li><span>畢業國中:</span><input type="text" name="grad_at" id="grad_at"></li>
-      </ul>
-      <div><input type="button" value="確定新增" onclick="create()"></div>
-    </form>
-  </div>
-
-  
   
 </body>
 </html>
@@ -66,13 +62,6 @@
 getClasses();
 
 
-// 顯示新增資料表格
-function openInsert(){
-  document.querySelector("#insertBlock").style.display="block";
-}
-
-
-
 
 //新增資料的函式
 function create(){
@@ -80,10 +69,10 @@ function create(){
   //   url:'',
   //   type:'',
   //   success: function(){
-
   //   }
   // })
 
+  //取得所有要新增到資料庫的欄位
   let name=document.querySelector("#name").value;
   let uni_id=document.querySelector("#uni_id").value;
   let class_num=document.querySelector("#class_num").value;
@@ -94,12 +83,13 @@ function create(){
   let tel=document.querySelector("#tel").value;
   let dept=document.querySelector("#dept").value;
   let grad_at=document.querySelector("#grad_at").value;
-  console.log(name,uni_id,class_num,birthday,nat_id,addr,parent,tel,dept,grad_at);
+  // console.log(name,uni_id,class_num,birthday,nat_id,addr,parent,tel,dept,grad_at);
 
-
+  //以ajax的方式將表單資料傳送到後端的api去
   $.post("api/insert.php",{name,uni_id,class_num,birthday,nat_id,addr,parent,tel,dept,grad_at},function(res){
     console.log(res);
 
+    //由api端提供回應來判斷新增是否成功，新增成功則alert成功訊息
     if(res==1){
       console.log("新增成功");
       document.querySelector("#insertBlock").style.display="none";
@@ -107,7 +97,19 @@ function create(){
   });
 }
 
+// 顯示新增資料表格
+function openInsert(){
+  // document.querySelector("#insertBlock").style.display="block";
+
+  $.get("api/add_form.php",function(form){
+    document.querySelector(".add-form").innerHTML=form;
+    document.querySelector(".edit-form").innerHTML="";
+  });
+}
+
+
 // 生成班級的option
+//用ajax向後端api程式要求班級清單選項並放在select標籤中
 function getClasses(){
   $.get("api/select_class.php",function(opt){
     // console.log(opt);
@@ -115,8 +117,10 @@ function getClasses(){
   });
 }
 
+
 // 抓出該班級的學生資料
 // 關鍵字前面加底線就可以當作變數
+//用ajax向後端api程式要求指定班級的學生並顯示在指定的區塊中
 function getStudents(_class){
   console.log(_class);
   $.get("api/get_students.php",{'class':_class},function(students){
@@ -128,6 +132,7 @@ function getStudents(_class){
 
 
 //查詢資料的函式
+//用ajax向後端的api程式要求查詢學生資料，只要輸入關鍵字就可以查得類似名稱的學生資料
 function query(){
   let str=document.querySelector("#query").value;
   $.get("api/query.php",{str},function(res){
@@ -136,13 +141,119 @@ function query(){
 }
 
 //編輯資料的函式
-function update(){
-
+function getUpdateForm(id){
+  $.get("api/edit.php",{id},function(form){
+    document.querySelector(".edit-form").innerHTML=form;
+    document.querySelector(".add-form").innerHTML="";
+  });
 }
+function update(){
+  // form_data被宣告為一個物件
+  let form_data={};
+  
+  form_data['name']=document.querySelector("#name").value;
+  form_data['uni_id']=document.querySelector("#uni_id").value;
+  form_data['class_num']=document.querySelector("#class_num").value;
+  form_data['birthday']=document.querySelector("#birthday").value;
+  form_data['nat_id']=document.querySelector("#nat_id").value;
+  form_data['addr']=document.querySelector("#addr").value;
+  form_data['parent']=document.querySelector("#parent").value;
+  form_data['tel']=document.querySelector("#tel").value;
+  form_data['dept']=document.querySelector("#dept").value;
+  form_data['grad_at']=document.querySelector("#grad_at").value;
+  form_data['id']=document.querySelector("#id").value;
+
+  console.log(form_data);
+
+  $.post("api/update.php",form_data,function(res){
+    console.log(res);
+   
+    // 由api端提供回應來判斷修改是否成功，新增成功則alert成功訊息
+    if(res==1){
+      console.log("更新成功");
+
+      let nowClass=document.querySelector("#classes").value;
+      getStudents(nowClass);
+      document.querySelector("#editBlock").style.display="none";
+    }else{
+      console.log("更新失敗");
+    }
+  });
+}
+
 
 //刪除資料的函式
-function del(){
+function del(id){
+  // 因為會變動資料表，所以用post
+  $.post("api/delete.php",{id},function(res){
+    if(res=='1'){
+      alert("已成功刪除id"+id+"的資料");
+
+      // 判斷該學生在哪一個班級，再重新抓出該班級的學生資料
+      let nowClass=document.querySelector("#classes").value;
+      getStudents(nowClass);
+    }else{
+      alert("刪除失敗，請洽管理員");
+    }
+  });
+}
+
+
+
+// 取消功能
+function cancel(){
+  document.querySelector(".edit-form").innerHTML="";
+  document.querySelector(".add-form").innerHTML="";
+}
+
+
+
+
+
+// 智慧型搜尋
+
+$("#query").on("input",()=>{ai()})
+
+function ai(){
+  // 用ajax
+  let str=document.querySelector("#query").value;
+  $.get("api/query.php",{str},function(res){
+    console.log(res);
+    let data=JSON.parse(res);
+    console.log(data);
+
+    let dom="";
+    // data.forEach(function(value,index){
+    //   dom=dom+"<span style='font-size:20px'>"+value.name+"-"+value.class_num+"</span></br>";
+    // });
+    data.forEach(function(value,index){
+      // 接受JSON的資料，想要用何種方式呈現，都可以隨自己做調整，不會被限制
+      // dom=dom+"<span style='font-size:20px'>"+value.姓名+"-"+value.班級座號+"-"+value.畢業國中+"</span></br>";
+      dom=dom+`
+          <div class="list">
+            <button>${value.姓名}</button>
+            <button>${value.班級座號}</button>
+            <button>${value.畢業國中}</button>
+          </div>`;
+    });
+    
+    document.querySelector(".query-result").innerHTML=dom;
+  })
+
+  
+  // 原生寫法
+  // let str=document.querySelector("#query").value;
+  // let xhr=new XMLHttpRequest;
+  // xhr.open('GET','api/query.php?str='+str,true);
+  // xhr.onload=function(){
+  //   let type=xhr.getResponseHeader("Content-Type");
+  //   let response=xhr.responseText;
+  //   document.querySelector(".query-result").innerHTML=response;
+ 
+  // };
+  // xhr.send(null);
 
 }
+
 
 </script>

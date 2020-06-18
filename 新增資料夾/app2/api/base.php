@@ -149,8 +149,6 @@ class DB
 
         }
 
-        // echo $sql;
-
         //執行sql語句，此處的回傳值為語句影響的筆數，
         //大於1表示新增了至少1筆資料或至少更新了一筆資料
         return $this->pdo->exec($sql);
@@ -182,7 +180,7 @@ class DB
             $sql = $sql . " where `id`='$arg'";
         }
 
-        // echo $sql;
+        //echo $sql;
         //執行sql語句，此處的回傳值為語句影響的筆數，
         //大於1表示刪除了至少1筆資料
         return $this->pdo->exec($sql);

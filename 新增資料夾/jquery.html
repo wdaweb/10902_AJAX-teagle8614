@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery</title>
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+      <!-------引入jQuery函式庫------->
+      <script src="jquery-3.5.1.min.js"></script>
+</head>
+<body>
+    <h1 class="header">jQuery</h1>
+    <div class="title"></div>
+    <h4></h4>
+    <ul></ul>
+    
+</body>
+</html>
+<script>
+    /********************************************************
+    * 1.api網址  https://kktix.com/events.json
+    * 2.選擇$.ajax()、$.get()、$.post()其中一種方式
+    * 3.建立回呼函式(call back function)來處理回應時的各項行為
+    * 4.建立錯誤處理
+    ********************************************************/
+     
+    //利用$.ajax()方法傳送請求並取得回應
+/*     $.ajax(
+      {
+        url:'https://kktix.com/events.json',
+        type:'GET',
+        success:function(response){
+          console.log(response)
+          renderList(response)
+        },
+        error:function(err){
+          console.log("err:"+err)
+        },
+        complete:function(xhr,status){
+          console.log("status:"+status)
+        }
+      }
+    )    */
+
+      $.get('https://kktix.com/events.json',function(response){
+
+         // console.log(response)
+          renderList(response)
+
+      })
+
+      
+
+    function renderList(response){
+        document.querySelector('.title').innerHTML=response.title;
+        document.querySelector('h4').innerHTML=response.updated;
+        let events=response.entry;
+
+        let str="";
+        events.forEach(function(event,index){
+            str=str+`<li>${event.title}</li>`;
+        })
+        document.querySelector('ul').innerHTML=str;
+    }
+
+    //利用$.get()方法傳送請求並取得回應
+
+
+  </script>
